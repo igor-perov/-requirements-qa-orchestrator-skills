@@ -1,0 +1,23 @@
+{
+  "project_name": "{{project_name}}",
+  "run_date": "{{run_date}}",
+  "run_mode": "{{run_mode}}",
+  "source_root": {
+    "title": "{{source_root_title}}",
+    "url": "{{source_root_url}}"
+  },
+  "counts": {
+    "requirements": "{{requirements_count}}",
+    "test_cases": "{{test_cases_count}}",
+    "executed": "{{executed_count}}",
+    "passed": "{{passed_count}}",
+    "failed": "{{failed_count}}",
+    "blocked": "{{blocked_count}}",
+    "manual_only": "{{manual_count}}"
+  },
+  "notes": {
+    "key_findings": "{{key_findings}}",
+    "risks": "{{risks}}",
+    "recommendations": "{{recommendations}}"
+  }
+}

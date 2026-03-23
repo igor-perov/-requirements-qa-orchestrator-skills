@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
+import argparse
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+FLAGSHIP_ROOT = REPO_ROOT / "skills" / "requirements-qa-orchestrator"
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Run a lightweight validation pass for the shareable requirements QA orchestrator repo."
+    )
+    parser.add_argument(
+        "--with-pdf",
+        action="store_true",
+        help="Also export the sample HTML report to PDF with playwright-cli or npx.",
+    )
+    return parser.parse_args()
+
+
+def run(command: list[str], cwd: Path | None = None) -> None:
+    result = subprocess.run(command, cwd=str(cwd or REPO_ROOT), text=True, capture_output=True)
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"Command failed ({result.returncode}): {' '.join(command)}\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
+        )
+    if result.stdout.strip():
+        print(result.stdout.strip())
+
+
+def require_paths() -> None:
+    required = [
+        REPO_ROOT / "README.md",
+        REPO_ROOT / "LICENSE",
+        REPO_ROOT / "scripts" / "install_local_skills.py",
+        REPO_ROOT / "scripts" / "smoke_validate.py",
+        FLAGSHIP_ROOT / "SKILL.md",
+        FLAGSHIP_ROOT / "agents" / "openai.yaml",
+        REPO_ROOT / "skills" / "confluence-qa-orchestrator" / "SKILL.md",
+        REPO_ROOT / "skills" / "confluence-qa-orchestrator" / "agents" / "openai.yaml",
+    ]
+    missing = [str(path) for path in required if not path.exists()]
+    if missing:
+        raise FileNotFoundError("Missing required packaged files:\n" + "\n".join(missing))
+
+
+def main() -> None:
+    args = parse_args()
+    require_paths()
+
+    run(
+        [
+            sys.executable,
+            "-m",
+            "unittest",
+            "discover",
+            str(FLAGSHIP_ROOT / "tests"),
+            "-v",
+        ]
+    )
+
+    with tempfile.TemporaryDirectory(prefix="rqo-shareable-") as tmpdir:
+        tmp_root = Path(tmpdir)
+        report_dir = tmp_root / "report"
+
+        run(
+            [
+                sys.executable,
+                str(FLAGSHIP_ROOT / "scripts" / "build_report_bundle.py"),
+                "--input",
+                str(FLAGSHIP_ROOT / "tests" / "fixtures" / "sample_execution_results.json"),
+                "--output-dir",
+                str(report_dir),
+            ]
+        )
+
+        if args.with_pdf:
+            run(
+                [
+                    sys.executable,
+                    str(FLAGSHIP_ROOT / "scripts" / "export_report_pdf.py"),
+                    "--html",
+                    str(report_dir / "qa-report.html"),
+                    "--pdf",
+                    str(report_dir / "qa-report.pdf"),
+                    "--landscape",
+                ]
+            )
+        print(f"Smoke validation artifacts: {report_dir}")
+
+
+if __name__ == "__main__":
+    main()

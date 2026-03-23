@@ -1,0 +1,8 @@
+interface:
+  display_name: "Requirements QA Orchestrator"
+  short_description: "Turn requirements into QA deliverables"
+  brand_color: "#1746A2"
+  default_prompt: "Use $requirements-qa-orchestrator to turn these requirements into test cases, execution subsets, or stakeholder-ready QA reports."
+
+policy:
+  allow_implicit_invocation: true

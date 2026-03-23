@@ -1,0 +1,8 @@
+interface:
+  display_name: "Confluence QA Orchestrator"
+  short_description: "Start QA work from a Confluence tree"
+  brand_color: "#0052CC"
+  default_prompt: "Use $confluence-qa-orchestrator to pull requirements from this Confluence tree and continue the QA workflow."
+
+policy:
+  allow_implicit_invocation: true

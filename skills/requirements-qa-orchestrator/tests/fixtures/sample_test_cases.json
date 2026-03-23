@@ -1,0 +1,48 @@
+{
+  "project_name": "Sample Valuation",
+  "cases": [
+    {
+      "id": "TC-AUTH-F-001",
+      "title": "Register with a valid work email",
+      "requirement_ids": [
+        "AUTH-1"
+      ],
+      "priority": "High",
+      "category": "Functional",
+      "preconditions": [
+        "Landing page is available"
+      ],
+      "steps": [
+        "Open the landing page",
+        "Enter a valid work email",
+        "Complete user details",
+        "Submit a valid OTP"
+      ],
+      "expected_results": [
+        "Registration succeeds",
+        "User reaches company data"
+      ],
+      "automation_candidate": true
+    },
+    {
+      "id": "TC-AUTH-ERR-001",
+      "title": "Reject a public email domain",
+      "requirement_ids": [
+        "AUTH-1"
+      ],
+      "priority": "High",
+      "category": "Error Handling",
+      "preconditions": [
+        "Landing page is available"
+      ],
+      "steps": [
+        "Open the landing page",
+        "Enter a public email address"
+      ],
+      "expected_results": [
+        "Continue remains unavailable"
+      ],
+      "automation_candidate": true
+    }
+  ]
+}
